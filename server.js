@@ -6,11 +6,11 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const app = express();
-app.use(express.json()); // parse JSON bodies
+app.use(express.json()); 
 
 const PORT = process.env.PORT || 3000;
 
-/** DB pool **/
+
 const pool = mariadb.createPool({
   host: process.env.DB_HOST || '127.0.0.1',
   user: process.env.DB_USER || 'root',
@@ -19,7 +19,7 @@ const pool = mariadb.createPool({
   connectionLimit: 5,
 });
 
-/** helpers **/
+
 const titleCase = (s='') => s.toString()
   .trim()
   .toLowerCase()
@@ -32,7 +32,7 @@ const handleValidation = (req, res, next) => {
   next();
 };
 
-/** GETs already required */
+
 app.get('/health', async (_req, res) => {
   try {
     const c = await pool.getConnection();
@@ -62,15 +62,13 @@ app.get('/orders', async (_req, res) => {
 app.get('/products', async (_req, res) => {
   try {
     const c = await pool.getConnection();
-    const rows = await c.query('SELECT * FROM foods LIMIT 50'); // alias to “products”
+    const rows = await c.query('SELECT * FROM foods LIMIT 50'); 
     c.release();
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-/** ---------- CRUD on /customers (table: customer) ---------- **/
-
-// POST /customers  (create)
+// POST /customers  
 app.post(
   '/customers',
   body('cust_code').trim().isLength({ min: 1 }).withMessage('cust_code required'),
@@ -95,7 +93,7 @@ app.post(
   }
 );
 
-// PATCH /customers/:id  (partial update)
+// PATCH /customers/:id  
 app.patch(
   '/customers/:id',
   param('id').trim().notEmpty(),
@@ -126,7 +124,7 @@ app.patch(
   }
 );
 
-// PUT /customers/:id  (replace)
+// PUT /customers/:id  
 app.put(
   '/customers/:id',
   param('id').trim().notEmpty(),
@@ -163,7 +161,7 @@ app.delete(
   }
 );
 
-/** ---------- Swagger ---------- **/
+
 const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
