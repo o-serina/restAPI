@@ -18,6 +18,8 @@ const pool = mariadb.createPool({
   connectionLimit: 5,
 });
 
+const axios = require('axios');
+
 /** helpers **/
 const titleCase = (s='') => s.toString().trim().toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
 const handleValidation = (req, res, next) => {
@@ -293,21 +295,21 @@ app.delete(
  *         description: Message from Serina
  */
 
-const axios = require('axios'); // make sure axios is installed
+const sayFunction = require('./function');
 
 app.get('/say', async (req, res) => {
   const { keyword } = req.query;
-  if (!keyword) return res.status(400).json({ error: "Missing 'keyword' parameter" });
+  if (!keyword)
+    return res.status(400).json({ error: "Missing 'keyword' parameter" });
 
   try {
-    // call your function hosted online (or locally for now)
-    const response = await axios.get(`https://YOUR_FUNCTION_URL?keyword=${encodeURIComponent(keyword)}`);
-    res.json({ message: response.data });
+    // call your local function directly
+    const result = sayFunction(keyword);
+    res.json({ message: result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 /** ---------- Swagger bootstrapping ---------- **/
 const swaggerSpec = swaggerJsdoc({
