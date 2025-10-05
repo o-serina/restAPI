@@ -276,6 +276,39 @@ app.delete(
   }
 );
 
+/**
+ * @swagger
+ * /say:
+ *   get:
+ *     summary: Returns a message using your Function
+ *     parameters:
+ *       - in: query
+ *         name: keyword
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: A keyword to include in the message
+ *     responses:
+ *       200:
+ *         description: Message from Serina
+ */
+
+const axios = require('axios'); // make sure axios is installed
+
+app.get('/say', async (req, res) => {
+  const { keyword } = req.query;
+  if (!keyword) return res.status(400).json({ error: "Missing 'keyword' parameter" });
+
+  try {
+    // call your function hosted online (or locally for now)
+    const response = await axios.get(`https://YOUR_FUNCTION_URL?keyword=${encodeURIComponent(keyword)}`);
+    res.json({ message: response.data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 /** ---------- Swagger bootstrapping ---------- **/
 const swaggerSpec = swaggerJsdoc({
   definition: {
