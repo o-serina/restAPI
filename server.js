@@ -295,7 +295,7 @@ app.delete(
  *         description: Message from Serina
  */
 
-const sayFunction = require('./function');
+const sayFunction = require('./my-function');
 
 app.get('/say', async (req, res) => {
   const { keyword } = req.query;
